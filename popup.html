@@ -1,10 +1,21 @@
 <!doctype html>
 <html>
+
 <head>
     <title>Dark mode extension</title>
 </head>
+
 <body>
-<button id="changeColor">
-<script src="popup.js"></script>
+    <!-- <button id="changeColor" type="button">Change To Dark</button> -->
+    <div style="width: 200px;border:1px solid lightgray">
+        <input type="checkbox" id="isDarkMode" name="changeColor" value="isDarkMode">
+        <label for="isDarkMode"> Enable dark mode</label><br>
+    </div>
+    <script src="popup.js"></script>
 </body>
+
 </html>
+
+<!--Task1: if dark mode is enabled, show on the icon itself that it is enabled
+Task 2: If dark mode is enabled, it should continue its state when a link is clicked
+TAsk 3: remove the checkbox, dark mode should enable disable on the clicking on the icon itself-->

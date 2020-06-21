@@ -3,7 +3,7 @@
 
   "name": "Dark mode extension",
   "description": "This extension will analyze a page using Dark mode",
-  "version": "1.2",
+  "version": "1.8",
 
   "browser_action": {
     "default_icon": "icon.png",
@@ -12,13 +12,14 @@
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {
-        "default": "Ctrl+Shift+D",
-        "mac": "MacCtrl+Shift+D"
+        "default": "Ctrl+Shift+M",
+        "mac": "MacCtrl+Shift+M"
       },
       "description": "Dark mode on"
     }
   },
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "storage"
   ]
 }
