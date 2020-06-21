@@ -1,20 +1,37 @@
-document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('isDarkMode').addEventListener('change', changeMode, false);
-}, false);
+/*call chromeBrowserAction on click event.
+    if the badge is not equal to 'Y' 
+        set the badge to 'Y'
+        darken the page
+        set tabs updated event listener
+    else if the badge is 'Y'
+        set the badge to 'N'
+        refresh the page
+        destroy tabs updated event listener.*/
 
+
+chrome.browserAction.onClicked.addListener(callbackfunction('browser action on clicked event', changeMode))
+
+function callbackfunction(msg, callback) {
+  console.log(`in the callback function called ${msg}`);
+  callback();
+}
 
 function changeMode() {
   try {
-    if (document.getElementById('isDarkMode').checked) {
-      console.log('from extension inside add event listener');
-      setBadgeTextAndStore('#32a852', 'Y');
-      enableDarkMode();
-    }
-    else {
-      console.log('Checkbox is not checked');
-      setBadgeTextAndStore('#000000', 'N');
-      chrome.tabs.reload();
-    }
+    chrome.browserAction.getBadgeText({}, function (result) {
+      if (result !== 'Y') {
+        console.log(`current badge: ${result} | Enabling darkening mode`);
+        setBadgeTextAndStore('#32a852', 'Y');
+        enableDarkMode();
+        addBrowserUpdateEventListener();
+      }
+      else if (result === 'Y') {
+        console.log('Disabling dark mode');
+        setBadgeTextAndStore('#000000', 'N');
+        chrome.tabs.reload();
+        disableBrowserUpdateEventListener();
+      }
+    });
   } catch (error) {
     console.error('Error occurred while change color', error);
   }
@@ -23,9 +40,6 @@ function changeMode() {
 function setBadgeTextAndStore(colorValue, textValue) {
   chrome.browserAction.setBadgeBackgroundColor({ color: colorValue });
   chrome.browserAction.setBadgeText({ text: textValue });
-  chrome.storage.local.set({ isDarkModeEnabled: textValue }, function () {
-    console.log('isDarkModeEnabled is set to ' + textValue);
-  });
 }
 
 function enableDarkMode() {
@@ -45,13 +59,23 @@ function enableDarkMode() {
   }
 }
 
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+var onTabLoadingComplete = function (tabId, changeInfo, tab) {
   if (tab.status === 'complete') {
-    chrome.storage.local.get(['isDarkModeEnabled'], function (result) {
-      if (result.isDarkModeEnabled === 'Y') {
-        document.getElementById('isDarkMode').setAttribute("checked", "true");
-        enableDarkMode();
-      }
-    });
+    console.log('tab loading is completed');
+    enableDarkMode();
   }
-});
+}
+
+function callbackfunctionOnTabComplete(msg, callback) {
+  console.log(`in the callback functio on tab complete n called ${msg}`);
+  callback(args1, args2, arg3);
+}
+
+function addBrowserUpdateEventListener() {
+  chrome.tabs.onUpdated.addListener(callbackfunctionOnTabComplete('bac', onTabLoadingComplete,tabId, changeInfo, tab));
+}
+
+function disableBrowserUpdateEventListener() {
+  setBadgeTextAndStore('#000000', 'N');
+  chrome.tabs.onUpdated.removeListener(callbackfunctionOnTabComplete('disloading', onTabLoadingComplete));
+}
