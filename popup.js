@@ -10,6 +10,7 @@
 
 
 chrome.browserAction.onClicked.addListener(callbackfunction('browser action on clicked event', changeMode))
+var dmEnabled = false;
 
 function callbackfunction(msg, callback) {
   console.log(`in the callback function called ${msg}`);
@@ -18,38 +19,24 @@ function callbackfunction(msg, callback) {
 
 function changeMode() {
   try {
-    chrome.browserAction.getBadgeText({}, function (result) {
-      if (result !== 'Y') {
-        console.log(`current badge: ${result} | Enabling darkening mode`);
-        setBadgeTextAndStore('#32a852', 'Y');
-        enableDarkMode();
-        document.getElementById("msg").innerHTML = "Dark mode is enabled";
-        // addBrowserUpdateEventListener();
-      }
-      else if (result === 'Y') {
-        console.log('Disabling dark mode');
-        setBadgeTextAndStore('#000000', 'N');
-        chrome.tabs.reload();
-        document.getElementById("msg").innerHTML = "...Disabling dark mode. Dark mode is disabled";
-        // disableBrowserUpdateEventListener();
-      }
-    });
+    if (!dmEnabled) {
+      console.log(`current badge: ${dmEnabled} | Enabling darkening mode`);
+      enableDarkMode();
+      document.getElementById("msg").innerHTML = "Dark mode is enabled";
+    }
   } catch (error) {
-    console.error('Error occurred while change color', error);
+    console.log('Error occurred while change color', error);
   }
 }
 
-function setBadgeTextAndStore(colorValue, textValue) {
-  chrome.browserAction.setBadgeBackgroundColor({ color: colorValue });
-  chrome.browserAction.setBadgeText({ text: textValue });
-}
 
 function enableDarkMode() {
   try {
+    dmEnabled = true;
     console.log('executing darkening script');
-    // TRY2: wherever is background color change it dark
+    // wherever is background color change it dark
     // font color white, change it to dark
-    // removed the querying of the tabs
+    // this is will by default act on the active tab only. removed query of tab
     chrome.tabs.executeScript(
       {
         code: '      for (var i = 0; i < document.getElementsByTagName("*").length; i++) {\n' +
@@ -61,17 +48,24 @@ function enableDarkMode() {
   }
 }
 
-var onTabLoadingComplete = function (tabId, changeInfo, tab) {
-  if (tab.status === 'complete') {
-    console.log('tab loading is completed');
-    enableDarkMode();
-  }
-}
+// To be used in the next version
 
-function callbackfunctionOnTabComplete(msg, callback) {
-  console.log(`in the callback functio on tab complete n called ${msg}`);
-  callback(args1, args2, arg3);
-}
+// function setBadgeTextAndStore(colorValue, textValue) {
+//   chrome.browserAction.setBadgeBackgroundColor({ color: colorValue });
+//   chrome.browserAction.setBadgeText({ text: textValue });
+// }
+
+// var onTabLoadingComplete = function (tabId, changeInfo, tab) {
+//   if (tab.status === 'complete') {
+//     console.log('tab loading is completed');
+//     enableDarkMode();
+//   }
+// }
+
+// function callbackfunctionOnTabComplete(msg, callback) {
+//   console.log(`in the callback function on tab complete n called ${msg}`);
+//   callback(args1, args2, arg3);
+// }
 
 // function addBrowserUpdateEventListener() {
 //   chrome.tabs.onUpdated.addListener(callbackfunctionOnTabComplete('bac', onTabLoadingComplete,tabId, changeInfo, tab));
