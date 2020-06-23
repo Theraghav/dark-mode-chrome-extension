@@ -23,13 +23,15 @@ function changeMode() {
         console.log(`current badge: ${result} | Enabling darkening mode`);
         setBadgeTextAndStore('#32a852', 'Y');
         enableDarkMode();
-        addBrowserUpdateEventListener();
+        document.getElementById("msg").innerHTML = "Dark mode is enabled";
+        // addBrowserUpdateEventListener();
       }
       else if (result === 'Y') {
         console.log('Disabling dark mode');
         setBadgeTextAndStore('#000000', 'N');
         chrome.tabs.reload();
-        disableBrowserUpdateEventListener();
+        document.getElementById("msg").innerHTML = "...Disabling dark mode. Dark mode is disabled";
+        // disableBrowserUpdateEventListener();
       }
     });
   } catch (error) {
@@ -71,11 +73,11 @@ function callbackfunctionOnTabComplete(msg, callback) {
   callback(args1, args2, arg3);
 }
 
-function addBrowserUpdateEventListener() {
-  chrome.tabs.onUpdated.addListener(callbackfunctionOnTabComplete('bac', onTabLoadingComplete,tabId, changeInfo, tab));
-}
+// function addBrowserUpdateEventListener() {
+//   chrome.tabs.onUpdated.addListener(callbackfunctionOnTabComplete('bac', onTabLoadingComplete,tabId, changeInfo, tab));
+// }
 
-function disableBrowserUpdateEventListener() {
-  setBadgeTextAndStore('#000000', 'N');
-  chrome.tabs.onUpdated.removeListener(callbackfunctionOnTabComplete('disloading', onTabLoadingComplete));
-}
+// function disableBrowserUpdateEventListener() {
+//   setBadgeTextAndStore('#000000', 'N');
+//   chrome.tabs.onUpdated.removeListener(callbackfunctionOnTabComplete('disloading', onTabLoadingComplete));
+// }
